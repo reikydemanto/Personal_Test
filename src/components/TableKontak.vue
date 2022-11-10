@@ -8,12 +8,15 @@
                 <th>Alamat</th>
                 <th>Action</th>
             </tr>
-            <tr v-for="data in daftarkontak" :key="data.id">
-                <td>{{ data.nama }}</td>
-                <td>{{ data.telepon }}</td>
-                <td>{{ data.email }}</td>
-                <td>{{ data.alamat }}</td>
-                <td>Update,Delete</td>
+            <tr v-for="(value, key) in daftarkontak">
+                <td>{{ value.nama }}</td>
+                <td>{{ value.telepon }}</td>
+                <td>{{ value.email }}</td>
+                <td>{{ value.alamat }}</td>
+                <td>
+                    <!-- <button @click="updateData(key)">Update</button> -->
+                    <button @click="deleteData(key)">Delete</button>
+                </td>
             </tr>
         </table>
     </div>
@@ -23,11 +26,19 @@
 </template>
 
 <script>
+
 export default {
     name: 'TableKontak',
     data() {
         return {
             daftarkontak: [],
+        }
+    },
+    methods: {
+        deleteData(key) {
+            console.log(key)
+            this.daftarkontak.splice(key, 1);
+            localStorage.setItem('daftarkontak',JSON.stringify(this.daftarkontak))
         }
     },
     created() {
