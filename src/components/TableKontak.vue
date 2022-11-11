@@ -1,61 +1,72 @@
 <template>
-    <div v-if="editor.length">
-        <table>
-            <tr>
-                <td>Nama Lengkap</td>
-                <td><input type="text" placeholder="Nama Lengkap" v-model="namaLengkap"></td>
-            </tr>
-            <tr>
-                <td>No Telepon</td>
-                <td><input type="text" placeholder="No Telepon" v-model="noTelepon"></td>
-            </tr>
-            <tr>
-                <td>Email</td>
-                <td><input type="email" placeholder="Email" v-model="email"></td>
-            </tr>
-            <tr>
-                <td>Alamat</td>
-                <td><input type="text" placeholder="Alamat" v-model="alamat"></td>
-            </tr>
-            <tr>
-                <td colspan="2">
-                    <Button @click="tombolUpdateData">Submit</Button>
-                </td>
-            </tr>
-        </table>
+    <div v-if="upModal.length">
+        <Modals @jawaban="jawabanModal" />
     </div>
     <div v-else>
-        <div v-if="daftarkontak.length">
-            <table border="1">
+        <div v-if="editor.length">
+            <table>
                 <tr>
-                    <th>Nama Lengkap</th>
-                    <th>Nomor HP</th>
-                    <th>Email</th>
-                    <th>Alamat</th>
-                    <th>Action</th>
+                    <td>Nama Lengkap</td>
+                    <td><input type="text" placeholder="Nama Lengkap" v-model="namaLengkap"></td>
                 </tr>
-                <tr v-for="(value, key) in daftarkontak">
-                    <td>{{ value.nama }}</td>
-                    <td>{{ value.telepon }}</td>
-                    <td>{{ value.email }}</td>
-                    <td>{{ value.alamat }}</td>
-                    <td>
-                        <button @click="updateData(key,value.id,value.nama,value.telepon,value.email,value.alamat)">Update</button>
-                        <button @click="deleteData(key)">Delete</button>
+                <tr>
+                    <td>No Telepon</td>
+                    <td><input type="text" placeholder="No Telepon" v-model="noTelepon"></td>
+                </tr>
+                <tr>
+                    <td>Email</td>
+                    <td><input type="email" placeholder="Email" v-model="email"></td>
+                </tr>
+                <tr>
+                    <td>Alamat</td>
+                    <td><input type="text" placeholder="Alamat" v-model="alamat"></td>
+                </tr>
+                <tr>
+                    <td colspan="2">
+                        <Button @click="tombolUpdateData">Submit</Button>
                     </td>
                 </tr>
             </table>
         </div>
         <div v-else>
-            <h3>Mohon Maaf data kosong, silahkan input data terlebih dahulu</h3>
+            <div v-if="daftarkontak.length">
+                <table border="1">
+                    <tr>
+                        <th>Nama Lengkap</th>
+                        <th>Nomor HP</th>
+                        <th>Email</th>
+                        <th>Alamat</th>
+                        <th>Action</th>
+                    </tr>
+                    <tr v-for="(value, key) in daftarkontak">
+                        <td>{{ value.nama }}</td>
+                        <td>{{ value.telepon }}</td>
+                        <td>{{ value.email }}</td>
+                        <td>{{ value.alamat }}</td>
+                        <td>
+                            <button
+                                @click="updateData(key, value.id, value.nama, value.telepon, value.email, value.alamat)">Update</button>
+                            <button @click="deleteData(key)">Delete</button>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+            <div v-else>
+                <h3>Mohon Maaf data kosong, silahkan input data terlebih dahulu</h3>
+            </div>
         </div>
     </div>
 </template>
 
 <script>
 
+import Modals from '../components/Modal.vue'
+
 export default {
     name: 'TableKontak',
+    components: {
+        Modals
+    },
     data() {
         return {
             daftarkontak: [],
@@ -65,14 +76,30 @@ export default {
             email: "",
             alamat: "",
             keyss: "",
-            id: ""
+            id: "",
+            upModal: "",
+            jawaban: "",
+            keyDel: "",
         }
     },
     methods: {
+        jawabanModal(newJawaban) {
+            this.jawaban = newJawaban
+            console.log(this.jawaban)
+            if(this.jawaban=="iya"){
+                this.daftarkontak.splice(this.keyDel, 1);
+                localStorage.setItem('daftarkontak', JSON.stringify(this.daftarkontak))
+                this.upModal = ""
+            }else{
+                this.upModal = ""
+            }
+        },
         deleteData(key) {
-            this.daftarkontak.splice(key, 1);
-            localStorage.setItem('daftarkontak', JSON.stringify(this.daftarkontak))
-        }, updateData(keysss,idsss,namalengk,notelep,emai,alama) {
+            this.upModal = [1]
+            this.keyDel = key
+        },
+
+        updateData(keysss, idsss, namalengk, notelep, emai, alama) {
             this.editor = [1]
             this.namaLengkap = namalengk
             this.noTelepon = notelep
@@ -80,8 +107,8 @@ export default {
             this.alamat = alama
             this.keyss = keysss
             this.id = idsss
-        }, tombolUpdateData(){
-            
+        }, tombolUpdateData() {
+
             if (!this.namaLengkap && !this.noTelepon && !this.email && !this.alamat) {
                 return;
             }
