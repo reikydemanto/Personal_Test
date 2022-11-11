@@ -6,7 +6,7 @@
         </tr>
         <tr>
             <td>No Telepon</td>
-            <td><input type="number" placeholder="No Telepon" v-model="noTelepon"></td>
+            <td><input type="text" placeholder="No Telepon" v-model="noTelepon"></td>
         </tr>
         <tr>
             <td>Email</td>
@@ -43,7 +43,8 @@ export default {
                 return;
             }
 
-            const a = JSON.parse(localStorage.getItem('daftarkontak')) || []
+            const a = JSON.parse(localStorage.getItem('daftarkontak'))
+            console.log(a)
             if (!a) {
                 this.dataform.push({ id: 1, nama: this.namaLengkap, telepon: this.noTelepon, email: this.email, alamat: this.alamat })
             } else {
